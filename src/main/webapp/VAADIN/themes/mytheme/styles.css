@@ -1270,6 +1270,10 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+.msgButton {
+	margin-top: 5px;
+}
+
 .mytheme.v-app, .mytheme.v-app-loading {
 	font: 300 16px/1.55 "Open Sans", sans-serif;
 	color: #464646;
@@ -11813,4 +11817,9 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	width: 19px;
 	overflow: hidden;
+}
+
+.mytheme .messagesDiv {
+	height: 500px;
+	overflow-y: scroll;
 }

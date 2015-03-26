@@ -8,4 +8,9 @@
 
   // Include mytheme theme styles in your theme
   @include mytheme;
+  
+  .messagesDiv{
+  	height: 500px;
+  	overflow-y: scroll;
+  }
 }
