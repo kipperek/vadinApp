@@ -8,9 +8,10 @@ import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.Container;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -44,6 +45,22 @@ public class MyVaadinUI extends UI implements BroadcastListener
     @VaadinServletConfiguration(productionMode = false, ui = MyVaadinUI.class, widgetset = "pl.vadinOne.web.AppWidgetSet")
     public static class Servlet extends VaadinServlet {
     }
+    
+    public void sendMsg(){
+    	String username = (String) item.getItemProperty("nick").getValue();                
+        username = "<b style='vertical-align: top;'>" +username+ "</b>";
+        String msgVal = msgField.getValue();
+        if(msgVal.length() > 0){
+        	 msgVal = msgVal.replace("<","&lt;");
+             msgVal = msgVal.replace(">","&gt;");
+             
+             msgVal = msgVal.replace("xD","<img src='/VAADIN/xd.png' style='width:20px; height: 20px;vertical-align: bottom;' alt/>");
+             
+         	 Broadcaster.broadcast(username + ": " + msgVal);
+         	 msgField.setValue("");
+        }
+       
+    }
 
     @Override
     protected void init(VaadinRequest request) {
@@ -55,6 +72,7 @@ public class MyVaadinUI extends UI implements BroadcastListener
         FormLayout form = new FormLayout();
 
         TextField nameField = new TextField("Nick:",item.getItemProperty("nick"));
+        nameField.setImmediate(true);
         form.addComponent(nameField);
         
         layout.addComponent(form);
@@ -63,24 +81,26 @@ public class MyVaadinUI extends UI implements BroadcastListener
         btn.addStyleName("msgButton");
         btn.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-            	String username = (String) item.getItemProperty("nick").getValue();                
-                username = "<b style='vertical-align: top;'>" +username+ "</b>";
-                String msgVal = msgField.getValue();
-                msgVal = msgVal.replace("<","&lt;");
-                msgVal = msgVal.replace(">","&gt;");
-                
-                msgVal = msgVal.replace("xD","<img src='/VAADIN/xd.png' style='width:20px; height: 20px;vertical-align: bottom;' alt/>");
-                
-            	 Broadcaster.broadcast(username + ": " + msgVal);
-            	 msgField.setValue("");
+            	sendMsg();
             }
         }); 
         
+        msgField.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
+        	@Override
+        	public void handleAction(Object sender, Object target) {
+        		sendMsg();
+        	}
+        });
+        
+        msgField.setSizeFull();
         msg.addContainerProperty("wiadomosc", Label.class, null);
         table.setContainerDataSource(msg);
         table.setSizeFull();
         layout.addComponent(table);
         
+        Label twojNick = new Label(item.getItemProperty("nick"));
+        twojNick.setCaption("Twój nick:");
+        layout.addComponent(twojNick);
         layout.addComponent(msgField);
         layout.addComponent(btn);
 
